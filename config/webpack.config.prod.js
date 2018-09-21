@@ -149,11 +149,11 @@ module.exports = {
             include: paths.appSrc,
             loader: require.resolve('babel-loader'),
             options: {
-              
-              compact: true,
               plugins:[				//新增代码
-                ['import',[{libraryName:"antd",style:'css'}]], //新增代码
-              ]	
+                ["import",[{libraryName:"antd",style:"css"}]], //新增代码
+              ],
+              compact: true,
+              
             },
           },
           // The notation here is somewhat confusing.
@@ -169,8 +169,21 @@ module.exports = {
           // use the "style" loader inside the async code so CSS from them won't be
           // in the main CSS file.
           {
-            //test: /\.css$/,
+            test: /\.css$/,
+            include: /node_modules/,    //检查包含的内容
+            use: [
+              require.resolve('style-loader'),
+              {
+                loader: require.resolve('css-loader'),
+                options: {
+                  modules:false //若是antd则关闭css modules
+                },
+              },
+            ]
+          },
+          {
             test: /\.(css|less)$/,
+            exclude: /node_modules\/antd/,	//检查排除antd
             loader: ExtractTextPlugin.extract(
               Object.assign(
                 {

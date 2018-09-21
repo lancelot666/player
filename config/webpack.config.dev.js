@@ -144,14 +144,13 @@ module.exports = {
             include: paths.appSrc,
             loader: require.resolve('babel-loader'),
             options: {
-              
+              plugins:[				//新增代码
+                ['import',[{libraryName:"antd",style:'css'}]], //新增代码
+              ],
               // This is a feature of `babel-loader` for webpack (not Babel itself).
               // It enables caching results in ./node_modules/.cache/babel-loader/
               // directory for faster rebuilds.
               cacheDirectory: true,
-              plugins:[				//新增代码
-                ['import',[{libraryName:"antd",style:'css'}]], //新增代码
-              ]	
             },
           },
           // "postcss" loader applies autoprefixer to our CSS.
@@ -160,8 +159,21 @@ module.exports = {
           // In production, we use a plugin to extract that CSS to a file, but
           // in development "style" loader enables hot editing of CSS.
           {
-            //test: /\.css$/,
             test: /\.(css|less)$/,
+            include: /node_modules/,    //检查包含的内容
+            use: [
+              require.resolve('style-loader'),
+              {
+                loader: require.resolve('css-loader'),
+                options: {
+                  modules:false //若是antd则关闭css modules
+                },
+              },
+            ]
+          },
+          {
+            test: /\.(css|less)$/,
+            exclude: /node_modules\/antd/,	//检查排除antd
             use: [
               require.resolve('style-loader'),
               {
